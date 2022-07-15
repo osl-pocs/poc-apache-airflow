@@ -36,13 +36,13 @@ jobs:
     - name: Create env file
       run: envsubst < env.tpl > .env
 
-    - name: Docker build db
+    - name: Docker build
       run: |
-        make docker-start SERVICES=docker-init-db
+        make docker-build
 
-    - name: Docker build webserver
+    - name: Docker start
       run: |
-        make docker-start webserver
+        make docker-start
 
     - name: Linting
       run: |
