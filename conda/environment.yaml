@@ -1,13 +1,12 @@
-name: env-poc-airflow
+name: poc-apache-airflow
 channels:
-  - conda-forge
   - nodefaults
+  - conda-forge
 dependencies:
   - pip
   - python 3.8.*
   # dev
   - pytest
-  pip:
+  - pip:
     - docker-compose
-    - Make
-
+    - make

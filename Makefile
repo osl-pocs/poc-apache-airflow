@@ -2,21 +2,11 @@
 
 
 SERVICES:=
-# options: dev, prod
 
 DOCKER=docker-compose \
 	--env-file .env \
 	--project-name poc \
 	--file docker/docker-compose.yaml
-
-# PREPARE ENVIRONMENT
-.PHONY:prepare-env
-prepare-env:
-	SHELL := /usr/bin/sh
-	source env.sh
-	envsubst < env.tpl > .env
-
-# docker-compose up airflow-init
 
 # DOCKER
 
@@ -26,7 +16,10 @@ docker-build:
 
 .PHONY:docker-start
 docker-start:
-	$(DOCKER) up -d ${SERVICES}
+	$(DOCKER) up -d postgres
+	./docker/healthcheck.sh postgres
+	$(DOCKER) up initdb
+	$(DOCKER) up -d webserver scheduler
 
 .PHONY:docker-postgres-db
 docker-postgres-db:
@@ -55,7 +48,7 @@ docker-exec:
 
 .PHONY:docker-logs-follow
 docker-logs-follow:
-	$(DOCKER) logs --follow --tail 300 
+	$(DOCKER) logs --follow --tail 300
 
 .PHONY:remove-orphans
 remove-orphans:
