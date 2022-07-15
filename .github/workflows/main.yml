@@ -1,0 +1,53 @@
+name: main
+
+on: [push, pull_request]
+
+env:
+  AIRFLOW_UID: 1000
+  AIRFLOW_WWW_USER_USERNAME: admin
+  AIRFLOW_WWW_USER_PASSWORD: admin
+  POSTGRES_USER: airflow
+  POSTGRES_PASSWORD: airflow
+  POSTGRES_DB: airflow
+  POSTGRES_PORT: 35432
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:35432/airflow
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: ci-main-${{ github.ref }}
+      cancel-in-progress: true
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniconda-version: "latest"
+        mamba-version: "*"
+        environment-file: conda/environment.yaml
+        channels: conda-forge,nodefaults
+        activate-environment: env-poc-airflow
+        use-mamba: true
+        miniforge-variant: Mambaforge
+
+    - name: Create env file
+      run: envsubst < env.tpl > .env
+
+    - name: Docker build
+      run: |
+        make docker-build
+
+    - name: Docker start
+      run: |
+        make docker-start
+
+    - name: Linting
+      run: |
+        make lint
