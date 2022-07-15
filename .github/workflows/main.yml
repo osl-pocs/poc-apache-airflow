@@ -47,7 +47,3 @@ jobs:
     - name: Docker start
       run: |
         make docker-start
-
-    - name: Linting
-      run: |
-        make lint
