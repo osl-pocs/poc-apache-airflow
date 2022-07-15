@@ -1,0 +1,4 @@
+.vscode/
+**AIRFLOW_HOME**
+tutorial*
+.env
