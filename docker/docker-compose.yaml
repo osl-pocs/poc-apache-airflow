@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 10
 
-  initdb:
+  airflow-initdb:
     build: .
     env_file:
       - ../.env
@@ -25,7 +25,7 @@ services:
     depends_on:
       - postgres
 
-  webserver:
+  airflow:
     build: .
     env_file:
       - ../.env
@@ -43,13 +43,13 @@ services:
       timeout: 30s
       retries: 3
 
-  scheduler:
+  airflow-scheduler:
     build: .
     env_file:
       - ../.env
     restart: always
     depends_on:
-      - webserver
+      - airflow
     volumes:
       - ./airflow_files/dags:/usr/local/airflow/dags
     entrypoint: "airflow scheduler"
