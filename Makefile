@@ -18,20 +18,8 @@ docker-build:
 docker-start:
 	$(DOCKER) up -d postgres
 	./docker/healthcheck.sh postgres
-	$(DOCKER) up initdb
-	$(DOCKER) up -d webserver scheduler
-
-.PHONY:docker-postgres-db
-docker-postgres-db:
-	$(DOCKER) up -d postgres
-
-.PHONY:docker-init-db
-docker-init-db: docker-postgres-db
-	$(DOCKER) up -d initdb
-
-.PHONY:docker-start-ci
-docker-start-ci: postgres
-	$(DOCKER) up -d --scale base=0
+	$(DOCKER) up airflow-initdb
+	$(DOCKER) up -d airflow airflow-scheduler
 
 .PHONY:docker-stop
 docker-stop:
